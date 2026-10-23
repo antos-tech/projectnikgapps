@@ -19,7 +19,7 @@ jobs:
           python3 -m venv ~/venv && . ~/venv/bin/activate
           pip install -r requirements.txt
           python -u -m NikGapps.main --androidVersion 17 --packageList full --packageSource git
-            - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
         with:
           name: nikgapps
           path: /home/runner/work/projectnikgapps/Releases/17/NikGapps-full-arm64-17-20261023-unofficial.zip
