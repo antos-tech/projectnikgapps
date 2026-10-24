@@ -1,0 +1,40 @@
+name: Build NikGapps core
+on: workflow_dispatch
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build
+        timeout-minutes: 60
+        env:
+          PYTHONUNBUFFERED: "1"
+          GIT_TERMINAL_PROMPT: "0"
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends python3 python3-pip python3-venv aapt git git-lfs apktool
+          git config --global user.name "ci"
+          git config --global user.email "ci@example.com"
+          python3 -m venv ~/venv && . ~/venv/bin/activate
+          pip install -r requirements.txt
+          python -u -m NikGapps.main --androidVersion 17 --packageList core --packageSource git
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nikgapps-core
+          path: /home/runner/work/projectnikgapps/Releases/17/*.zip
+      
+
+      - name: Raccogli gli zip
+        if: always()
+        run: |
+          mkdir -p "$GITHUB_WORKSPACE/out"
+          find /home/runner -iname "nikgapps*.zip" -size +1M -not -path "*/venv/*" -print -exec cp {} "$GITHUB_WORKSPACE/out/" \; || true
+          ls -lh "$GITHUB_WORKSPACE/out"
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: nikgapps-core-out
+          path: out/
+          if-no-files-found: warn
