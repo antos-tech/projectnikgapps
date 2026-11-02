@@ -1,4 +1,4 @@
-name: Build NikGapps (fork)
+name: Build NikGapps full
 on: workflow_dispatch
 jobs:
   build:
